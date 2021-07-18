@@ -1,21 +1,84 @@
 import React from "react";
+import {
+  AppContainer,
+  MessageContainer,
+  MessageItem,
+  InputsContainer,
+  FormContainer,
+  InputName,
+  InputMessage,
+  InputButton,
+} from "./App.styles";
 
-function App() {
-  return (
-    <div>
-      <h1>Olá, Thaís</h1>
-      <p>
-        Você vai encontrar o arquivo "App.jsx", que é o componente principal que
-        será renderizado na tela. Não sei como você prefere usar a estilização.
-        A vantagem do React é que tu pode usar o <em>styled-components</em> e eu
-        posso usar o CSS normal que não vai impactar tanto. O formato dos
-        arquivos react que estou usando é o jsx, que fica melhor para trabalhar
-        no vscode. Quando ler essa mensagem me manda uma mensagem pra começarmos
-        a planejar em como vamos trabalharnesse projetinho.
-        <strong> Lembra de mudar sua branch.</strong>
-      </p>
-    </div>
-  );
+export default class App extends React.Component {
+  state = {
+    userName: "",
+    userMessage: "",
+    messages: [{ name: "Lucas 🤘", message: "Projeto concluído, Thais!" }],
+  };
+
+  changeName = (event) => this.setState({ userName: event.target.value });
+
+  changeMessage = (event) => this.setState({ userMessage: event.target.value });
+
+  addMessage = (event) => {
+    event.preventDefault();
+    const newMessages = [
+      {
+        name: this.state.userName,
+        message: this.state.userMessage,
+      },
+      ...this.state.messages,
+    ];
+    this.setState({
+      messages: newMessages,
+      userMessage: "",
+    });
+    console.log(newMessages);
+  };
+
+  removeMessage = (messageToRemove) => {
+    const newMessages = [...this.state.messages].filter(
+      (message) => message.message !== messageToRemove
+    );
+    this.setState({ messages: newMessages });
+  };
+
+  render() {
+    const messageList = this.state.messages.map((message, index) => {
+      return (
+        <MessageItem
+          onDoubleClick={() => this.removeMessage(message.message)}
+          key={index}
+        >
+          <span>{message.name}</span>
+          <br />
+          <span>{message.message}</span>
+        </MessageItem>
+      );
+    });
+
+    return (
+      <AppContainer>
+        <MessageContainer>{messageList}</MessageContainer>
+        <InputsContainer>
+          <FormContainer onSubmit={this.addMessage}>
+            <InputName
+              placeholder={"Nome"}
+              value={this.state.userName}
+              onChange={this.changeName}
+            />
+            <InputMessage
+              placeholder={"Mensagem"}
+              value={this.state.userMessage}
+              onChange={this.changeMessage}
+            />
+            <InputButton onClick={this.addMessage}>
+              <i class="far fa-paper-plane"></i>
+            </InputButton>
+          </FormContainer>
+        </InputsContainer>
+      </AppContainer>
+    );
+  }
 }
-
-export default App;
